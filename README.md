@@ -15,18 +15,19 @@ Add to controller:
 
 	public $uses = array('TrelloApi.Trello');
  
-*Important*  
+**Important**  
 For now you need to provide token manually by calling:  
 
 	$this->Trello->setToken('secret token');
 
-I plan to add oAuth authorization in the near future.  
+I plan to add oAuth authorization in the near future. For now get your token by replacing params in this URL and calling it in your browser:  
+https://trello.com/1/connect?key=API_KEY&name=APP_NAME&response_type=token&scope=read,write&expiration=never
 
 ### Usage
 
 Look for possible API calls at https://trello.com/docs/api/index.html  
 
-For example to get all boards of current member (GET /1/members/me/boards):  
+For example to get all boards of current member (_GET /1/members/me/boards_):  
 
 	$this->Trello->find('all', array(
 		'type' => 'boards',
