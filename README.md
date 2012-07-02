@@ -4,25 +4,42 @@ Wrapper for Trello API.
 
 ### Setup
 
-Edit _TrelloApi.key_ in _TrelloApi/Config/bootstrap.php_  
+Get and install OAuth plugin from https://github.com/segy/OAuth  
+
+Edit _TrelloApi.key_ and _TrelloApi.secret_in _TrelloApi/Config/bootstrap.php_  
 (get one from https://trello.com/1/appKey/generate)  
  
 Inicialize plugin in your application _bootstrap.php_ with bootstrap option set to true  
 
 	CakePlugin::load(array('TrelloApi' => array('bootstrap' => true)));
  
-Add to controller:  
+In controller:  
 
-	public $uses = array('TrelloApi.Trello');
+	public $components = array('TrelloApi.TrelloApi');
+	
+	// in any of your methods
+	public function trello() {
+		// save token to database, session, etc.
+		if ($this->TrelloApi->getAccessToken())
+			$this->Session->write('Trello.accessToken', $this->TrelloApi->getAccessToken());
+		
+		// if we have token
+		if ($token = $this->Session->read('Trello.accessToken')) {
+			// set token - automatically initializes Trello model
+			$this->TrelloApi->setToken($token);
+			
+			// use Trello model to get data
+			$data = $this->Trello->find('all', array(
+				'type' => 'cards',
+				'conditions' => array('member_id' => 'me', 'filter' => 'open')
+			));
+		}
+		// if not, provide authorization link
+		else {
+			$this->set('link', $this->TrelloApi->getAuthorizationLink());
+		}
+	}
  
-**Important**  
-For now you need to provide token manually by calling:  
-
-	$this->Trello->setToken('secret token');
-
-I plan to add oAuth authorization in the near future. For now get your token by replacing params in this URL and calling it in your browser:  
-https://trello.com/1/connect?key=API_KEY&name=APP_NAME&response_type=token&scope=read,write&expiration=never
-
 ### Usage
 
 Look for possible API calls at https://trello.com/docs/api/index.html  
@@ -37,6 +54,14 @@ For example to get all boards of current member (_GET /1/members/me/boards_):
 Any optional parameters can be passed as condition:  
 
 	$this->Trello->find('all', array(
-		'type' => 'boards',
+		'type' => 'cards',
 		'conditions' => array('member_id' => 'me', 'filter' => 'open')
 	));
+ 
+Example for getting current member:  
+
+	$this->Trello->find('all', array(
+		'type' => 'member',
+		'conditions' => array('id' => 'me')
+	));
+	
