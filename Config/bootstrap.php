@@ -3,12 +3,12 @@
  * Application key
  * @link https://trello.com/1/appKey/generate
  */
-Configure::write('TrelloApi.key', '34113948641f6d5b57db6177eed03c0f');
+Configure::write('TrelloApi.key', '');
 /**
  * Application secret
  * @link https://trello.com/1/appKey/generate
  */
-Configure::write('TrelloApi.secret', '6a4eee55b9fdcfc83028fa03739a5cf66602f25001cc9e24fbdfea4eb747eba1');
+Configure::write('TrelloApi.secret', '');
 
 /**
  * API URL without trailing slash
